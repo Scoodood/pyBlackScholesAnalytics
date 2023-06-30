@@ -485,7 +485,9 @@ class OptionPlotter(Plotter):
 
         # define the figure
         fig = plt.figure(figsize=(15, 10))
-        ax = fig.gca(projection='3d')
+        
+        # Fixed: It is now compatible with matplotlib-3.7.1
+        ax = fig.add_subplot(projection='3d')
 
         # grid points, if needed convert dates to numeric representation for plotting
         times_numeric = self.fin_inst.time_to_maturity(t=iv.index)  # date_to_number(iv.index)
@@ -555,7 +557,9 @@ class OptionPlotter(Plotter):
 
         # define the figure
         fig = plt.figure(figsize=(15, 10))
-        ax = fig.gca(projection='3d')
+        
+        # Fixed: It is now compatible with matplotlib-3.7.1
+        ax = fig.add_subplot(projection='3d')
 
         # define a dense grid of times
         # in case of dates: from the most recent valuation date to expiration date
@@ -881,7 +885,9 @@ class PortfolioPlotter(Plotter):
 
         # define the figure
         fig = plt.figure(figsize=(15, 10))
-        ax = fig.gca(projection='3d')
+        
+        # Fixed: It is now compatible with matplotlib-3.7.1
+        ax = fig.add_subplot(projection='3d')
 
         # define a dense grid of times
         # in case of dates: from the most recent valuation date to expiration date

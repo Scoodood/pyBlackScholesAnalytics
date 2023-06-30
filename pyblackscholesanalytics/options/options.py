@@ -555,6 +555,9 @@ class EuropeanOption:
         d1 = (np.log(S / K) + (r + 0.5 * sigma ** 2) * tau) / (sigma * np.sqrt(tau))
         d2 = d1 - sigma * np.sqrt(tau)
 
+        # Fixed: It is now compatible with numpy-1.24.3
+        d1 = np.asarray(d1).astype(float)
+        d2 = np.asarray(d2).astype(float)
         return d1, d2
 
     #
@@ -871,7 +874,9 @@ class EuropeanOption:
             #
 
             # minimization function (function of implied volatility only)
-            f = lambda iv: (self.price(*args, sigma=iv, **kwargs) - target_price).flatten()
+            
+            # Fixed: It is now compatible with numpy-1.24.3
+            f = lambda iv: (self.price(*args, sigma=iv, **kwargs) - target_price).flatten().astype(float)
 
             # initial implied volatility guess
             iv0 = np.repeat(iv_estimated, repeats=target_price.size)

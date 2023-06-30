@@ -411,8 +411,10 @@ def test_valid_format(date_string, date_format="%d-%m-%Y"):
             # 1-dim case
             dt.datetime.strptime(date_string, date_format)
         elif is_iterable_not_string(date_string):
-            # Multi-dim case
-            pd.to_datetime(date_string, format=date_format, errors='raise')
+            # Multi-dim case            
+            
+            # Fixed: It is now compatible with pandas-1.5.3
+            pd.to_datetime(date_string, errors='raise')
         else:
             # neither an Iterable, nor a String: raise TypeError
             raise TypeError("Type {} of date_string {} not recognized".format(type(date_string), date_string))
