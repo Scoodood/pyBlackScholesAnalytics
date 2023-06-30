@@ -13,23 +13,31 @@ finite-difference methods for plain-vanilla and digital option contracts.
 
 import numpy as np
 
+from typing import Union
 from pyblackscholesanalytics.market.market import MarketEnvironment
 from pyblackscholesanalytics.options.options import PlainVanillaOption, DigitalOption
 from pyblackscholesanalytics.utils.numeric_routines import NumericGreeks
 from pyblackscholesanalytics.utils.utils import plot, homogenize
 
 
-def option_factory(mkt_env, plain_or_digital, option_type):
+def option_factory(
+        mkt_env: MarketEnvironment, 
+        plain_or_digital: str, 
+        option_type: str
+    ) -> Union[PlainVanillaOption, DigitalOption]:
+    
+    # Fixed: This version instantiates one object instead of 4 during each call
     option_dispatcher = {
-        "plain_vanilla": {"call": PlainVanillaOption(mkt_env),
-                          "put": PlainVanillaOption(mkt_env, option_type="put")
-                          },
-        "digital": {"call": DigitalOption(mkt_env),
-                    "put": DigitalOption(mkt_env, option_type="put")
-                    }
+        "plain_vanilla": {
+            "call": lambda: PlainVanillaOption(mkt_env),
+            "put": lambda: PlainVanillaOption(mkt_env, option_type="put")
+        },
+        "digital": {
+            "call": lambda: DigitalOption(mkt_env),                    
+            "put": lambda: DigitalOption(mkt_env, option_type="put")
+        }
     }
-
-    return option_dispatcher[plain_or_digital][option_type]
+    return option_dispatcher[plain_or_digital][option_type]()
 
 
 def greeks_factory(ObjWithGreeksMethod, greek_type):

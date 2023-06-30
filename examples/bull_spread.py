@@ -14,7 +14,6 @@ computed and plotted using the Plotter class as line plots and surface-plots Vs 
 
 import pandas as pd
 import warnings
-
 warnings.filterwarnings("ignore")
 
 from pyblackscholesanalytics.market.market import MarketEnvironment

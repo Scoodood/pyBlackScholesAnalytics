@@ -12,29 +12,36 @@ first-order greeks plots are shown for plain-vanilla and digital option contract
 """
 
 import pandas as pd
-
+from typing import Union
 from pyblackscholesanalytics.market.market import MarketEnvironment
 from pyblackscholesanalytics.options.options import PlainVanillaOption, DigitalOption
 from pyblackscholesanalytics.plotter.plotter import OptionPlotter
 
 
-def option_factory(mkt_env, plain_or_digital, option_type):
+def option_factory(
+        mkt_env: MarketEnvironment, 
+        plain_or_digital: str, 
+        option_type: str
+    ) -> Union[PlainVanillaOption, DigitalOption]:
+    
+    # Fixed: This version instantiates one object instead of 4 during each call
     option_dispatcher = {
-        "plain_vanilla": {"call": PlainVanillaOption(mkt_env),
-                          "put": PlainVanillaOption(mkt_env, option_type="put")
-                          },
-        "digital": {"call": DigitalOption(mkt_env),
-                    "put": DigitalOption(mkt_env, option_type="put")
-                    }
+        "plain_vanilla": {
+            "call": lambda: PlainVanillaOption(mkt_env),
+            "put": lambda: PlainVanillaOption(mkt_env, option_type="put")
+        },
+        "digital": {
+            "call": lambda: DigitalOption(mkt_env),                    
+            "put": lambda: DigitalOption(mkt_env, option_type="put")
+        }
     }
-
-    return option_dispatcher[plain_or_digital][option_type]
+    return option_dispatcher[plain_or_digital][option_type]()
 
 
 def get_time_parameter(option, kind='date'):
     # date time-parameter
+    
     if kind == 'date':
-
         # valuation date of the option
         emission_date = option.get_t()
 
@@ -42,13 +49,13 @@ def get_time_parameter(option, kind='date'):
         expiration_date = option.get_T()
 
         # time-parameter as a date-range of 5 valuation dates between t and T-10d
-        time_parameter = pd.date_range(start=emission_date,
-                                       end=expiration_date - pd.Timedelta(days=20),
-                                       periods=5)
+        time_parameter = pd.date_range(
+            start=emission_date,
+            end=expiration_date - pd.Timedelta(days=20),
+            periods=5)
 
     # time-to-maturity time parameter    
     else:
-
         # time-parameter as a list of times-to-maturity
         time_parameter = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7]
 
